@@ -8,18 +8,21 @@ class DishDetail extends Component {
     }
 
     renderComments(comments) {
-        let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const date_format = {
+            year: 'numeric',
+            month: 'short',
+            day: '2-digit'
+        }
         if (comments.length !== 0){
-
             const comms = comments.map((comm) => {
                 return (
                     <div key={comm.id}>
                         <ul className="list-unstyled">
                             <li>{comm.comment}</li>
-                            <li>-- {comm.author + ", " + months[parseInt(comm.date.slice(5,7))-1] + " " + comm.date.slice(8,10) + ", " + comm.date.slice(0,4)}</li>
+                            <li>-- {comm.author} {new Intl.DateTimeFormat('en-US', date_format).format(new Date(Date.parse(comm.date)))}</li>
                         </ul>
                     </div>
-                    );
+                );
             })
             return (
                 <div>
@@ -51,12 +54,14 @@ class DishDetail extends Component {
 
     render() {
         return (
-            <div className="row">
-                <div className="col-12 col-md-5 m-1">
-                    {this.displayDish(this.props.dish)}
-                </div>
-                <div className="col-12 col-md-5 m-1">
-                    {this.renderComments(this.props.dish.comments)}
+            <div className="container">
+                <div className="row">
+                    <div className="col-12 col-md-5 m-1">
+                        {this.displayDish(this.props.dish)}
+                    </div>
+                    <div className="col-12 col-md-5 m-1">
+                        {this.renderComments(this.props.dish.comments)}
+                    </div>
                 </div>
             </div>
         );
