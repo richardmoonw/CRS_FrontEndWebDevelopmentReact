@@ -34,9 +34,11 @@ class Header extends Component {
     }
 
     handleLogin(event) {
+        // In this example we are retrieving the values of the input through the DOM, not
+        // through the state of the component.
         this.toggleModal();
         alert("Username: " + this.username.value + " Password: " + this.password.value +
-            " Remember: " + this.remember.value);
+            " Remember: " + this.remember.checked);
         event.preventDefault();
     }
 
