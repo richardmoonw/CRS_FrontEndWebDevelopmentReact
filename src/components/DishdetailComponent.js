@@ -1,6 +1,91 @@
-import React from 'react';
-import { Card, CardImg, CardTitle, CardBody, CardText, Breadcrumb, BreadcrumbItem } from 'reactstrap';
+import React, { Component } from 'react';
+import { Card, CardImg, CardTitle, CardBody, CardText, Breadcrumb, BreadcrumbItem, Col, Row, Label, 
+    Button, Modal, ModalHeader, ModalBody } from 'reactstrap';
+import { Control, Errors, LocalForm } from 'react-redux-form';
 import { Link } from 'react-router-dom';
+
+const minLen = (val) =>  val && val.length > 2;
+const maxLen = (val) => !(val) || val.length <= 15;
+
+class CommentForm extends Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            isModalOpen: false
+        }
+
+        this.toggleModal = this.toggleModal.bind(this);
+    }
+    
+    toggleModal() {
+        this.setState({
+            isModalOpen: !this.state.isModalOpen
+        });
+    }
+
+    submitForm(values) {
+        alert("Current State is: " + JSON.stringify(values));
+    }
+
+
+    render() {
+        return(
+            <>
+                <Button outline onClick={this.toggleModal}>
+                    <span className="fa fa-pencil fa-lg"> Submit Comment</span>
+                </Button>
+                <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
+                    <ModalHeader toggle={this.toggleModal}>Submit Comment</ModalHeader>
+                    <ModalBody>
+                        <LocalForm onSubmit={(values) => this.submitForm(values)} >
+                            <Row className="form-group">
+                                <Label md={12} htmlFor="rating">Rating</Label>
+                                <Col md={12}>
+                                    <Control.select model=".rating" id="rating" name="rating" className="form-control">
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                        <option>5</option>
+                                    </Control.select>
+                                </Col>
+                            </Row>
+                            <Row className="form-group">
+                                <Label md={12} htmlFor="name">Your name</Label>
+                                <Col md={12}>
+                                    <Control.text model=".name" id="name" name="name" className="form-control"
+                                        placeholder="Your name" 
+                                        validators={{
+                                            minLen, maxLen
+                                        }} />
+                                    <Errors className="text-danger" model=".name" show="touched"
+                                        messages={{
+                                            minLen: 'Must be greater than 2 characters',
+                                            maxLen: 'Must be 15 characters or less' 
+                                        }} />
+                                </Col>
+                            </Row>
+                            <Row className="form-group">
+                                <Label md={12} htmlFor="comment">Comment</Label>
+                                <Col md={12}>
+                                    <Control.textarea model=".comment" id="comment" name="comment" className="form-control"
+                                        rows="6" />
+                                </Col>
+                            </Row>
+                            <Row className="form-group">
+                                <Col md={12}>
+                                    <Button color="primary" type="submit">Submit</Button>
+                                </Col>
+                            </Row>
+                        </LocalForm>
+                    </ModalBody>
+                </Modal>
+            </>
+        );
+    }
+}
 
 function RenderComments({comments}) {
         
@@ -18,9 +103,9 @@ function RenderComments({comments}) {
             // of items).
             <div key={comm.id}>
                 <li>{comm.comment}</li>
-                <br/>
+                <br />
                 <li>-- {comm.author} {new Intl.DateTimeFormat('en-US', date_format).format(new Date(Date.parse(comm.date)))}</li>
-                <br/>
+                <br />
             </div>    
         );
     })
@@ -31,6 +116,7 @@ function RenderComments({comments}) {
             <ul className="list-unstyled">
                 {comms}
             </ul>
+            <CommentForm />
         </div>
     ); 
 }
