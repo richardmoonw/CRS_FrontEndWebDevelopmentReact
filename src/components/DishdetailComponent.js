@@ -26,7 +26,7 @@ class CommentForm extends Component {
     }
 
     submitForm(values) {
-        alert("Current State is: " + JSON.stringify(values));
+        this.props.addComment(this.props.dishId, values.rating, values.name, values.comment);
     }
 
 
@@ -87,7 +87,7 @@ class CommentForm extends Component {
     }
 }
 
-function RenderComments({comments}) {
+function RenderComments({comments, addComment, dishId}) {
         
     // Variable used for formating the ISO date
     const date_format = {
@@ -116,7 +116,7 @@ function RenderComments({comments}) {
             <ul className="list-unstyled">
                 {comms}
             </ul>
-            <CommentForm />
+            <CommentForm dishId={dishId} addComment={addComment} />
         </div>
     ); 
 }
@@ -156,7 +156,8 @@ const DishDetail = (props) => {
                 </div>
                 <div className="row">    
                     <RenderDish dish={props.dish} />
-                    <RenderComments comments={props.comments} />
+                    <RenderComments comments={props.comments}
+                        addComment={props.addComment} dishId={props.dish.id} />
                 </div>
             </div>
         );
