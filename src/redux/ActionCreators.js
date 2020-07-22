@@ -1,23 +1,63 @@
 import * as ActionTypes from './ActionTypes';
 import { baseUrl } from '../shared/baseUrl';
 
+// When you declare a Thunk function you shall be sure to use the dispatch instruction
+// in the body of the dirst arrow function. Then you create another arrow function with
+// all the functionality that you want to have.
+
 // This is a function that creates an action object. Remember that a REDUCER receives an action object 
 // and the current state of the application to create a new one based on these two. So this is an important 
 // part because the actions are payloads of information that send data from your application to your store. 
 // They are only source of information for the store. Here we use a standard for a action function: it receives
 // all the data to be updated and returns an object with a type and a payload (these names are just conventional).
-export const addComment = (dishId, rating, author, comment) => ({
+export const addComment = (comment) => ({
     type: ActionTypes.ADD_COMMENT,
-    payload: {
+    payload: comment
+});
+
+
+export const postComment = (dishId, rating, author, comment) => (dispatch) => {
+
+    const newComment = {
         dishId: dishId,
         rating: rating,
         author: author,
         comment: comment
     }
-});
+    newComment.date = new Date().toISOString();
+
+    return fetch(baseUrl + 'comments', {
+        method: 'POST',
+        body: JSON.stringify(newComment),
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin'
+    })
+        .then(response => {
+            if (response.ok) {
+                return response
+            }
+            else {
+                var error = new Error('Error ' + response.status + ': ' + response.statusText);
+                error.response = response;
+                throw error;
+            }
+        },
+        error => {
+            var errMess =  new Error(error.message);
+            throw errMess;
+        })
+        .then(response => response.json())
+        .then(response => dispatch(addComment(response)))
+        .catch(error => { 
+            console.log('Post comments ', error.message);
+            alert("Your comment could not be poster \n Error: " + error.message);
+        })
+}
 
 // This is a thunk because instead of returning the action, it executes extra calulations before the real action
-// is returned and the change to the state is triggered.
+// is returned and the change to the state is triggered. 
 export const fetchDishes = () => (dispatch) => {
     dispatch(dishesLoading(true));
 

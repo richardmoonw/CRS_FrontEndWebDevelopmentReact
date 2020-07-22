@@ -28,7 +28,8 @@ class CommentForm extends Component {
     }
 
     submitForm(values) {
-        this.props.addComment(this.props.dishId, values.rating, values.name, values.comment);
+        this.toggleModal();
+        this.props.postComment(this.props.dishId, values.rating, values.name, values.comment);
     }
 
 
@@ -89,7 +90,7 @@ class CommentForm extends Component {
     }
 }
 
-function RenderComments({comments, addComment, dishId}) {
+function RenderComments({comments, postComment, dishId}) {
         
     // Variable used for formating the ISO date
     const date_format = {
@@ -118,7 +119,7 @@ function RenderComments({comments, addComment, dishId}) {
             <ul className="list-unstyled">
                 {comms}
             </ul>
-            <CommentForm dishId={dishId} addComment={addComment} />
+            <CommentForm dishId={dishId} postComment={postComment} />
         </div>
     ); 
 }
@@ -177,7 +178,7 @@ const DishDetail = (props) => {
                 <div className="row">    
                     <RenderDish dish={props.dish} />
                     <RenderComments comments={props.comments}
-                        addComment={props.addComment} dishId={props.dish.id} />
+                        postComment={props.postComment} dishId={props.dish.id} />
                 </div>
             </div>
         );
